@@ -84,10 +84,13 @@ int main()
             if (!items_on_screen[i].is_grounded())
             {
                 items_on_screen[i].position.y+=items_on_screen[i].find_gravity();
+            }else
+            {
+                items_on_screen[i].position.y -=items_on_screen[i].find_gravity();
             }
             
-        }
-        
+            
+        }        
 
 
         EndDrawing();

@@ -4,22 +4,36 @@
 
 bool IsMousePressedInRec(Rectangle rec)
 {
-            Vector2 mouse_position = GetMousePosition();
+    Vector2 mouse_position = GetMousePosition();
 
  if (IsMouseButtonPressed(0)&&CheckCollisionPointRec(mouse_position, rec))
-        
-
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }   
-        
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }        
 
 }
 
+enum ChessPieceType
+{
+EMPTY,
+PAWN,
+ROOK,
+BISHOP,
+KNIGHT,
+QUEEN,
+KING
+};
+
+enum ChessPieceColor
+{
+NONE,
+WHITE_PIECE,
+BLACK_PIECE
+};
 
 
 struct ChessSquare
@@ -28,6 +42,8 @@ struct ChessSquare
     int position_x;
     int size;
     Color color;
+    ChessPieceType piece_type = ChessPieceType::EMPTY;
+    ChessPieceColor piece_color = ChessPieceColor::NONE;
     int GetCentreX()
     {
         return position_x + size/2;
@@ -67,20 +83,28 @@ int main ()
         {
              int square_y_position =starting_position_y +(j*cell_height);
              Color CellColor;
+             ChessPieceType piece_type;
              if ((i+j)%2)
              {
                 CellColor = WHITE;
              }
              else
              {
-                CellColor = GREEN;
+                CellColor = BLACK;
+             }
+             if (j==1||j==number_of_squares_in_y-2)
+             {
+               piece_type= ChessPieceType::PAWN;
+             }
+             else
+             {
+                piece_type = ChessPieceType::EMPTY;
              }
              
-        squares.push_back({square_y_position, square_x_position, cell_width, CellColor});
-
+             
+             
+        squares.push_back({square_y_position, square_x_position, cell_width, CellColor, piece_type = piece_type});
         }
-        
-        //starting_position_x+=cell_width;
     }
     
 
@@ -88,22 +112,19 @@ int main ()
     InitWindow(width, height, "Successfully made the board.");
     SetTargetFPS(60);
 
-        Image iconImage = LoadImage("pawn2.png");
-        ImageResize(&iconImage, cell_width -4, cell_height-4);
-
+    // Texture Loading
+    Image iconImage = LoadImage("pawn2.png");
+    ImageResize(&iconImage, cell_width -4, cell_height-4);
     Texture2D texture = LoadTextureFromImage(iconImage);
-
-
-    //  Unload the raw image from RAM (No longer needed once on the GPU)
     UnloadImage(iconImage); 
 
+    //Main Update loop
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(background);
-        DrawText("I'm trying to draw a grid", 0,0,18, WHITE);
 
-       
+        DrawText("I'm trying to draw a grid", 0,0,18, WHITE);      
         
 
         for (auto &&cell : squares)
@@ -118,6 +139,11 @@ int main ()
             //DrawCircle(cell.GetCentreX(), cell.GetCentreY(), 7, background);
                 DrawTexture(texture, cell.GetCentreX()-(texture.width/2), cell.GetCentreY()- (texture.height/2), WHITE);
             }
+            if (cell.piece_type == ChessPieceType::PAWN)
+            {
+                DrawTexture(texture, cell.GetCentreX()-(texture.width/2), cell.GetCentreY()- (texture.height/2), WHITE);
+            }
+            
             
             
         }
