@@ -10,4 +10,4 @@ LDFLAGS = -Llib -lraylib -lopengl32 -lgdi32 -lwinmm -Wl,--defsym,stat64i32=_stat
 
 # 3. Clean target to wipe out all generated .exe files
 clean:
-	rm -f *.exe
+	del *.exe

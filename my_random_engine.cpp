@@ -48,3 +48,14 @@ Color GetRandomColor()
         (unsigned char)find_random_int(0,256)
     };
 }
+
+Color GetRandomSolidColor()
+{
+    return (Color)
+    {
+        (unsigned char)find_random_int(0,256), 
+        (unsigned char)find_random_int(0,256), 
+        (unsigned char)find_random_int(0,256), 
+        (unsigned char)255
+    };
+}

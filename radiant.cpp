@@ -94,6 +94,8 @@ int main()
     // Rendering
         BeginDrawing();
         ClearBackground(BLACK);
+        int fps = GetFPS();
+        int no_of_particles = items_on_screen.size();
 
   //  int CircleSpeed = find_random_int(1,20);
 
@@ -110,7 +112,7 @@ int main()
         }
 
         //Creating the circles
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)|| IsMouseButtonDown(0))
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
            items_on_screen.push_back({GetMousePosition(),CircleRadius,CircleColor});
         }
@@ -153,6 +155,8 @@ int main()
         DrawText(TextFormat("Radius  = %d", CircleRadius),0,0,20,RAYWHITE);
         DrawText(TextFormat("Color", CircleRadius),0,25,20,RAYWHITE);
         DrawRectangle(80,25, 20,20, CircleColor);
+        DrawText(TextFormat("Particles: %d", no_of_particles),0,50,20,RAYWHITE);
+        DrawText(TextFormat("FPS: %d", fps),0,75,20,RAYWHITE);
 
        // DrawRectangleLinesEx(BoundingRect, 10.0 , CircleColor);
 
