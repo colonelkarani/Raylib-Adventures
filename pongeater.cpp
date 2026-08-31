@@ -19,7 +19,18 @@ bool IsMousePressedInRec(Rectangle rec)
     }        
 }
 
+Color OppositeColor(Color color)
+{
+    return {
+        static_cast<unsigned char>(255 - color.r),
+        static_cast<unsigned char>(255 - color.g),
+        static_cast<unsigned char>(255 - color.b),
+        color.a
+    };
+}
 
+Color TeamAColor = GetRandomSolidColor();
+Color TeamBColor = OppositeColor(TeamAColor);
 
 enum class Teams : char
 {
@@ -32,7 +43,7 @@ struct PongBall
 {
     Vector2 position;
     int radius=15;
-    Vector2 velocity = {3,2};
+    Vector2 velocity = {6,4};
     Teams team = Teams::NONE;
     Color GetPongTeamColor()
     {
@@ -42,10 +53,10 @@ struct PongBall
             return WHITE;
             break;
         case Teams::TEAM_A :
-            return BLUE;
+            return TeamAColor;
             break;
         case Teams::TEAM_B :
-            return RED;
+            return TeamBColor;
             break;
         default: return GREEN;
         }
@@ -86,10 +97,10 @@ struct GridSquare
             return BLACK;
             break;
         case Teams::TEAM_A :
-            return RED;
+            return TeamBColor;
             break;
         case Teams::TEAM_B :
-            return BLUE;
+            return TeamAColor;
             break;
         default: return GREEN;
         }
@@ -114,51 +125,105 @@ void UpdatePongBallsPosition(PongBall& ball)
     ball.position.y+=ball.velocity.y;
 }
 
+// void UpdatePongBallsVelocity(PongBall& ball, GridSquare& square)
+// {
+//     if (ball.team != square.team)
+//     {
+//         //ball.velocity.x = -ball.velocity.x;
+//         //ball.velocity.y = -ball.velocity.y;
+//         int previous_ball_x_position =ball.position.x-ball.velocity.x;
+//         int previous_ball_y_position =ball.position.y-ball.velocity.y;
+//         Vector2 square_limits_x, square_limits_y;
+//         square_limits_x = (Vector2){square.position_x, square.position_x+square.size};
+//         square_limits_y = (Vector2){square.position_y, square.position_y+square.size};
+
+//         if (square_limits_x.x>previous_ball_x_position||square_limits_x.y<previous_ball_x_position)
+//         {
+//             ball.velocity.x = -ball.velocity.x;
+//         square.GetEatenAndSwitchTeam(ball.team);
+
+//         }else
+//         if (square_limits_y.x>previous_ball_y_position||square_limits_y.y<previous_ball_y_position)
+//         {
+//             ball.velocity.y = -ball.velocity.y;
+//         square.GetEatenAndSwitchTeam(ball.team);
+
+//         }else
+//         if ((square_limits_x.x>previous_ball_x_position||square_limits_x.y<previous_ball_x_position)&& (square_limits_y.x>previous_ball_y_position||square_limits_y.y<previous_ball_y_position))
+//         {
+//             ball.velocity.x = -ball.velocity.x;
+//             ball.velocity.y = -ball.velocity.y;
+//         square.GetEatenAndSwitchTeam(ball.team);
+
+//         }
+        
+        
+
+//     }
+//     if ((ball.position.x-ball.radius) <=0 || (ball.position.x+ball.radius)>=SCREEN_HEIGHT)
+//     {
+//         ball.velocity.x=-ball.velocity.x;
+//     }
+//     if ( (ball.position.y-ball.radius) <=0 || (ball.position.y+ball.radius)>=SCREEN_HEIGHT)
+//     {
+//         ball.velocity.y=-ball.velocity.y;
+//     }
+    
+    
+// }
+
 void UpdatePongBallsVelocity(PongBall& ball, GridSquare& square)
 {
+    // 1. Team Collision Logic
     if (ball.team != square.team)
     {
-        //ball.velocity.x = -ball.velocity.x;
-        //ball.velocity.y = -ball.velocity.y;
-        int previous_ball_x_position =ball.position.x-ball.velocity.x;
-        int previous_ball_y_position =ball.position.y-ball.velocity.y;
-        Vector2 square_limits_x, square_limits_y;
-        square_limits_x = (Vector2){square.position_x, square.position_x+square.size};
-        square_limits_y = (Vector2){square.position_y, square.position_y+square.size};
+        // Define bounding box of the square
+        float left = square.position_x;
+        float right = square.position_x + square.size;
+        float top = square.position_y;
+        float bottom = square.position_y + square.size;
 
-        if (square_limits_x.x>previous_ball_x_position||square_limits_x.y<previous_ball_x_position)
+        // Simple AABB collision check with the ball's position
+        bool colliding = (ball.position.x + ball.radius >= left && 
+                          ball.position.x - ball.radius <= right &&
+                          ball.position.y + ball.radius >= top && 
+                          ball.position.y - ball.radius <= bottom);
+
+        if (colliding)
         {
-            ball.velocity.x = -ball.velocity.x;
-        square.GetEatenAndSwitchTeam(ball.team);
+            // Determine which axis it hit by checking previous position or simple overlap vector.
+            // A safer approach for basic pong is checking which side was crossed:
+            float prev_x = ball.position.x - ball.velocity.x;
+            float prev_y = ball.position.y - ball.velocity.y;
 
-        }else
-        if (square_limits_y.x>previous_ball_y_position||square_limits_y.y<previous_ball_y_position)
-        {
-            ball.velocity.y = -ball.velocity.y;
-        square.GetEatenAndSwitchTeam(ball.team);
+            // If previously outside horizontally, invert X velocity
+            if (prev_x < left || prev_x > right) {
+                ball.velocity.x = -ball.velocity.x;
+            }
+            // If previously outside vertically, invert Y velocity
+            if (prev_y < top || prev_y > bottom) {
+                ball.velocity.y = -ball.velocity.y;
+            }
 
-        }else
-        if ((square_limits_x.x>previous_ball_x_position||square_limits_x.y<previous_ball_x_position)&& (square_limits_y.x>previous_ball_y_position||square_limits_y.y<previous_ball_y_position))
-        {
-            ball.velocity.x = -ball.velocity.x;
-            ball.velocity.y = -ball.velocity.y;
-        square.GetEatenAndSwitchTeam(ball.team);
+            // Fallback if it came straight through or deep inside
+            if (prev_x >= left && prev_x <= right && prev_y >= top && prev_y <= bottom) {
+                ball.velocity.x = -ball.velocity.x;
+                ball.velocity.y = -ball.velocity.y;
+            }
 
+            square.GetEatenAndSwitchTeam(ball.team);
         }
-        
-        
-
-    }
-    if ((ball.position.x-ball.radius) <=0 || (ball.position.x+ball.radius)>=SCREEN_HEIGHT)
-    {
-        ball.velocity.x=-ball.velocity.x;
-    }
-    if ( (ball.position.y-ball.radius) <=0 || (ball.position.y+ball.radius)>=SCREEN_HEIGHT)
-    {
-        ball.velocity.y=-ball.velocity.y;
     }
     
-    
+    // 2. Screen Boundaries (Fixed SCREEN_HEIGHT usage)
+    if ((ball.position.x - ball.radius) <= 0 || (ball.position.x + ball.radius) >= SCREEN_HEIGHT)
+    {
+        ball.velocity.x = -ball.velocity.x;
+    }
+    if ((ball.position.y - ball.radius) <= 0 || (ball.position.y + ball.radius) >= SCREEN_HEIGHT)
+    {
+        ball.velocity.y = -ball.velocity.y;
+    }
 }
 
 using namespace std;
@@ -168,8 +233,8 @@ int main ()
   
 
 
-    int number_of_squares_in_x=15;
-    int number_of_squares_in_y =15;
+    int number_of_squares_in_x=25;
+    int number_of_squares_in_y =25;
 
 
    Color background_color = GetRandomSolidColor();
@@ -209,8 +274,8 @@ int main ()
     }
 
     PongBall ball_1, ball_2 ;
-    ball_1.position = (Vector2){200, 400};
-    ball_2.position = (Vector2){600, 400};
+    ball_1.position = (Vector2){float(find_random_int(0, 399)), float(find_random_int(2, SCREEN_HEIGHT-1))};
+    ball_2.position = (Vector2){float(find_random_int(402 ,SCREEN_HEIGHT-1)), float(find_random_int(2, SCREEN_HEIGHT-1))};
     ball_1.team = Teams::TEAM_A;
     ball_2.team = Teams::TEAM_B;
 
@@ -219,8 +284,8 @@ int main ()
     
 
 
-    InitWindow(SCREEN_HEIGHT, SCREEN_HEIGHT, "Successfully made the board.");
-  //  SetTargetFPS(60);
+    InitWindow(SCREEN_HEIGHT, SCREEN_HEIGHT, "BALL PORN");
+    SetTargetFPS(1000);
 
 
     //Main Update loop
