@@ -283,7 +283,6 @@ int main ()
     balls.push_back(ball_2);
     
 
-
     InitWindow(SCREEN_HEIGHT, SCREEN_HEIGHT, "BALL PORN");
     SetTargetFPS(1000);
 
@@ -296,6 +295,8 @@ int main ()
 
        // DrawText("I'm trying to draw a grid", 0,0,18, WHITE);      
         
+        int no_of_squares_team_A= 0;
+        int no_of_squares_team_B= 0;
      
 
 
@@ -312,6 +313,15 @@ int main ()
             {
             DrawCircle(cell.GetCentreX(), cell.GetCentreY(), 7, background_color);
             } 
+            if (cell.team == Teams::TEAM_A)
+            {
+                no_of_squares_team_A++;
+            }
+            if (cell.team == Teams::TEAM_B)
+            {
+                no_of_squares_team_B++;
+            }
+            
         }
 
         for (auto &&ball : balls)
@@ -327,6 +337,8 @@ int main ()
 
         
         DrawText(TextFormat("FPS: %d",GetFPS()),0,0,20, WHITE);
+        DrawText(TextFormat("TEAM A: %d",no_of_squares_team_A),0,25,20, WHITE);
+        DrawText(TextFormat("TEAM B: %d",no_of_squares_team_B),0,50,20, WHITE);
 
 
         EndDrawing();
