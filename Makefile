@@ -1,6 +1,6 @@
 # 1. Define your compiler and required build flags
 CXX = g++
-CXXFLAGS = -Wall -std=c++17 -Iinclude
+CXXFLAGS = -Wall -std=c++17 -Iinclude "my_random_engine.cpp"
 LDFLAGS = -Llib -lraylib -lopengl32 -lgdi32 -lwinmm -Wl,--defsym,stat64i32=_stat64
 
 # 2. Pattern Rule: Tells Make how to build ANY execution file from a matching .cpp file

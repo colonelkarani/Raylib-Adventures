@@ -4,7 +4,7 @@
 #include <format>
 
 #include "ansi_colors.hpp"
-#include "my_random_engine.cpp"
+#include "VKUtils.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -15,7 +15,7 @@ struct MyCircle
     int radius;
     Color circle_color;
     int speed;
-    int mass = find_random_int(1,4);
+    int mass = GetRandomInt(1,4);
     Vector2 velocity = (Vector2){1,1};
     int find_gravity()
     {
@@ -97,7 +97,7 @@ int main()
         int fps = GetFPS();
         int no_of_particles = items_on_screen.size();
 
-  //  int CircleSpeed = find_random_int(1,20);
+  //  int CircleSpeed = GetRandomInt(1,20);
 
         // Randomize color
          if (IsKeyPressed(KEY_R))

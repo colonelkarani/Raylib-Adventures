@@ -1,10 +1,11 @@
 #include <iostream>
 #include <random>
 #include <raylib.h>
+#include "VKUtils.h"
 
 using namespace std;
 
-int find_random_int (int lower, int upper)
+int GetRandomInt (int lower, int upper)
 {
     static random_device rd;
     static mt19937 gen(rd());
@@ -42,10 +43,10 @@ Color GetRandomColor()
 {
     return (Color)
     {
-        (unsigned char)find_random_int(0,256), 
-        (unsigned char)find_random_int(0,256), 
-        (unsigned char)find_random_int(0,256), 
-        (unsigned char)find_random_int(0,256)
+        (unsigned char)GetRandomInt(0,256), 
+        (unsigned char)GetRandomInt(0,256), 
+        (unsigned char)GetRandomInt(0,256), 
+        (unsigned char)GetRandomInt(0,256)
     };
 }
 
@@ -53,9 +54,31 @@ Color GetRandomSolidColor()
 {
     return (Color)
     {
-        (unsigned char)find_random_int(0,256), 
-        (unsigned char)find_random_int(0,256), 
-        (unsigned char)find_random_int(0,256), 
+        (unsigned char)GetRandomInt(0,256), 
+        (unsigned char)GetRandomInt(0,256), 
+        (unsigned char)GetRandomInt(0,256), 
         (unsigned char)255
+    };
+}
+
+Color GetOppositeColor(Color normalColor)
+{
+     return (Color)
+    {
+        (unsigned char)(255 -normalColor.r ), 
+        (unsigned char)(255 - normalColor.g), 
+        (unsigned char)(255 - normalColor.b), 
+        (unsigned char)(255 - normalColor.a)
+    };
+}
+
+Color GetOppositeSolidColor(Color normalColor)
+{
+     return (Color)
+    {
+        (unsigned char)(255 -normalColor.r) , 
+        (unsigned char)(255 - normalColor.g), 
+        (unsigned char)(255 - normalColor.b), 
+        (unsigned char)(255 )
     };
 }
