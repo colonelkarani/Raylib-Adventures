@@ -41,6 +41,8 @@ struct ChessSquare
     int position_y;
     int position_x;
     int size;
+    char board_square_position_x;
+    int board_square_position_y;
     Color color;
     ChessPieceType piece_type = ChessPieceType::EMPTY;
     ChessPieceColor piece_color = ChessPieceColor::NONE;
@@ -100,10 +102,43 @@ int main ()
              {
                 piece_type = ChessPieceType::EMPTY;
              }
+            char position_x= 'n';
+            switch (i)
+            {
+            case 0:
+                position_x = 'a';
+                break;
+            case 1:
+                position_x = 'b';
+                break;
+            case 2:
+                position_x = 'c';
+                break;
+            case 3:
+                position_x = 'd';
+                break;
+            case 4:
+                position_x='e';
+                break;
+            case 5:
+                position_x='f';
+                break;
+            case 6:
+                position_x='g';
+                break;
+            case 7:
+                position_x='h';
+                break;
+            
+            default:
+            position_x  = 'n';
+                break;
+            }
+            int position_y = 8-j;
              
+        ChessSquare square = (ChessSquare){square_y_position, square_x_position, cell_width,position_x,position_y,CellColor, piece_type};
              
-             
-        squares.push_back({square_y_position, square_x_position, cell_width, CellColor, piece_type = piece_type});
+        squares.push_back(square);
         }
     }
     
@@ -143,6 +178,7 @@ int main ()
             {
                 DrawTexture(texture, cell.GetCentreX()-(texture.width/2), cell.GetCentreY()- (texture.height/2), WHITE);
             }
+        DrawText(TextFormat("%c%d", cell.board_square_position_x, cell.board_square_position_y), cell.GetCentreX(), cell.GetCentreY(), 20, GREEN);
             
             
             
