@@ -1,5 +1,5 @@
 #include <raylib.h>
-#include "my_random_engine.cpp"
+#include "VKUtils.h"
 #include <vector>
 
 bool IsMousePressedInRec(Rectangle rec)
@@ -130,7 +130,7 @@ int main ()
         for (auto &&cell : squares)
         {
             DrawRectangle(cell.position_x, cell.position_y, cell.size, cell.size, cell.color);
-            if (IsMousePressedInRec((Rectangle){cell.position_x, cell.position_y, cell.size, cell.size}))
+            if (IsMousePressedInRec((Rectangle){float(cell.position_x), float(cell.position_y), float(cell.size), float(cell.size)}))
             {
                 cell.IsSelected = !cell.IsSelected;                
             }
