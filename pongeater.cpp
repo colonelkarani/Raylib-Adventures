@@ -1,5 +1,5 @@
 #include <raylib.h>
-#include "my_random_engine.cpp"
+#include "VKUtils.h"
 #include <vector>
 #include <cmath>
 
@@ -38,6 +38,8 @@ enum class Teams : char
     TEAM_A,
     TEAM_B
 };
+
+
 
 struct PongBall
 {
@@ -112,7 +114,17 @@ struct GridSquare
     bool IsSelected= false;
 };
 
-
+void SwitchTeam(GridSquare &square)
+{
+    if (square.team == Teams::TEAM_A)
+    {
+        square.team = Teams::TEAM_B;
+    }else
+    {
+        square.team = Teams::TEAM_A;
+    }
+    
+}
 
 void RenderPongBall(PongBall ball)
 {
@@ -274,8 +286,8 @@ int main ()
     }
 
     PongBall ball_1, ball_2 ;
-    ball_1.position = (Vector2){float(find_random_int(0, 399)), float(find_random_int(2, SCREEN_HEIGHT-1))};
-    ball_2.position = (Vector2){float(find_random_int(402 ,SCREEN_HEIGHT-1)), float(find_random_int(2, SCREEN_HEIGHT-1))};
+    ball_1.position = (Vector2){float(GetRandomInt(0, 399)), float(GetRandomInt(2, SCREEN_HEIGHT-1))};
+    ball_2.position = (Vector2){float(GetRandomInt(402 ,SCREEN_HEIGHT-1)), float(GetRandomInt(2, SCREEN_HEIGHT-1))};
     ball_1.team = Teams::TEAM_A;
     ball_2.team = Teams::TEAM_B;
 
@@ -307,7 +319,8 @@ int main ()
 
             if (IsMousePressedInRec((Rectangle){float(cell.position_x), float(cell.position_y), float(cell.size), float(cell.size)}))
             {
-                cell.IsSelected = !cell.IsSelected;                
+                cell.IsSelected = !cell.IsSelected;    
+                SwitchTeam(cell);            
             }
             if (cell.IsSelected)
             {
