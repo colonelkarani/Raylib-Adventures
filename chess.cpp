@@ -159,7 +159,7 @@ int main ()
         BeginDrawing();
         ClearBackground(background);
 
-        DrawText("I'm trying to draw a grid", 0,0,18, WHITE);      
+        DrawText("Successfully named the boxes", 0,0,18, WHITE);      
         
 
         for (auto &&cell : squares)

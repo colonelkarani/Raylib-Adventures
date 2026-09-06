@@ -243,8 +243,6 @@ using namespace std;
 int main ()
 {
   
-
-
     int number_of_squares_in_x=25;
     int number_of_squares_in_y =25;
 
