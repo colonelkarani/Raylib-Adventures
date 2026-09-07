@@ -2,6 +2,9 @@
 #include "VKUtils.h"
 #include <vector>
 
+using namespace std;
+
+
 bool IsMousePressedInRec(Rectangle rec)
 {
     Vector2 mouse_position = GetMousePosition();
@@ -46,6 +49,7 @@ struct ChessSquare
     Color color;
     ChessPieceType piece_type = ChessPieceType::EMPTY;
     ChessPieceColor piece_color = ChessPieceColor::NONE;
+    Texture2D piece_icon;
     int GetCentreX()
     {
         return position_x + size/2;
@@ -57,7 +61,27 @@ struct ChessSquare
     bool IsSelected= false;
 };
 
-using namespace std;
+void ImageResizeProportional(Image* image, int max_width, int max_height) 
+{
+    // 1. Get original dimensions
+    float original_width = (float)image->width;
+    float original_height = (float)image->height;
+
+    // 2. Calculate scaling ratios for both dimensions
+    float ratio_w = (float)max_width / original_width;
+    float ratio_h = (float)max_height / original_height;
+
+    // 3. Choose the smaller ratio to ensure it fits entirely inside the bounding box
+    float scale = (ratio_w < ratio_h) ? ratio_w : ratio_h;
+
+    // 4. Calculate new unskewed dimensions
+    int new_width = (int)(original_width * scale);
+    int new_height = (int)(original_height * scale);
+
+    // 5. Resize the actual image using your existing function
+    ImageResize(image, new_width, new_height);
+}
+
 int main ()
 {
     int number_of_squares_in_x=8;
@@ -98,6 +122,11 @@ int main ()
              {
                piece_type= ChessPieceType::PAWN;
              }
+            //  else if (i == 0 || i )
+            //  {
+            //     /* code */
+            //  }
+             
              else
              {
                 piece_type = ChessPieceType::EMPTY;
@@ -148,10 +177,59 @@ int main ()
     SetTargetFPS(60);
 
     // Texture Loading
-    Image iconImage = LoadImage("pawn2.png");
-    ImageResize(&iconImage, cell_width -4, cell_height-4);
-    Texture2D texture = LoadTextureFromImage(iconImage);
-    UnloadImage(iconImage); 
+    Image white_pawn_icon_image = LoadImage("pieces/pawn_white.png");
+    Image black_pawn_icon_image = LoadImage("pieces/pawn_black.png");
+    Image white_bishop_icon_image = LoadImage("pieces/bishop_white.png");
+    Image black_bishop_icon_image = LoadImage("pieces/bishop_black.png");
+    Image white_rook_icon_image = LoadImage("pieces/rook_white.png");
+    Image black_rook_icon_image = LoadImage("pieces/rook_black.png");
+    Image white_queen_icon_image = LoadImage("pieces/queen_white.png");
+    Image black_queen_icon_image = LoadImage("pieces/queen_black.png");
+    Image white_king_icon_image = LoadImage("pieces/king_white.png");
+    Image black_king_icon_image = LoadImage("pieces/king_black.png");
+    Image white_knight_icon_image = LoadImage("pieces/knight_white.png");
+    Image black_knight_icon_image = LoadImage("pieces/knight_black.png");
+
+    // ImageResize(&white_pawn_icon_image, cell_width , cell_height);
+    ImageResizeProportional(&white_pawn_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_pawn_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&white_bishop_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_bishop_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&white_rook_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_rook_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&white_queen_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_queen_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&white_king_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_king_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&black_knight_icon_image, cell_width, cell_height);
+    ImageResizeProportional(&white_knight_icon_image, cell_width, cell_height);
+
+
+    Texture2D white_pawn_texture = LoadTextureFromImage(white_pawn_icon_image);
+    Texture2D black_pawn_texture = LoadTextureFromImage(black_pawn_icon_image);
+    Texture2D white_rook_texture = LoadTextureFromImage(white_rook_icon_image);
+    Texture2D black_rook_texture = LoadTextureFromImage(black_rook_icon_image);
+    Texture2D white_bishop_texture = LoadTextureFromImage(white_bishop_icon_image);
+    Texture2D black_bishop_texture = LoadTextureFromImage(black_bishop_icon_image);
+    Texture2D white_queen_texture = LoadTextureFromImage(white_queen_icon_image);
+    Texture2D black_queen_texture = LoadTextureFromImage(black_queen_icon_image);
+    Texture2D white_king_texture = LoadTextureFromImage(white_king_icon_image);
+    Texture2D black_king_texture = LoadTextureFromImage(black_king_icon_image);
+    Texture2D white_knight_texture = LoadTextureFromImage(white_knight_icon_image);
+    Texture2D black_knight_texture = LoadTextureFromImage(black_knight_icon_image);
+
+    UnloadImage(white_pawn_icon_image); 
+    UnloadImage(black_pawn_icon_image); 
+    UnloadImage(white_rook_icon_image); 
+    UnloadImage(black_rook_icon_image); 
+    UnloadImage(white_bishop_icon_image); 
+    UnloadImage(black_bishop_icon_image); 
+    UnloadImage(white_queen_icon_image); 
+    UnloadImage(black_queen_icon_image); 
+    UnloadImage(white_king_icon_image); 
+    UnloadImage(black_king_icon_image); 
+    UnloadImage(white_knight_icon_image); 
+    UnloadImage(black_knight_icon_image); 
 
     //Main Update loop
     while (!WindowShouldClose())
@@ -172,11 +250,11 @@ int main ()
             if (cell.IsSelected)
             {
             //DrawCircle(cell.GetCentreX(), cell.GetCentreY(), 7, background);
-                DrawTexture(texture, cell.GetCentreX()-(texture.width/2), cell.GetCentreY()- (texture.height/2), WHITE);
+                DrawTexture(white_pawn_texture, cell.GetCentreX()-(white_pawn_texture.width/2), cell.GetCentreY()- (white_pawn_texture.height/2), WHITE);
             }
-            if (cell.piece_type == ChessPieceType::PAWN)
+            if (cell.piece_type == ChessPieceType::PAWN&& cell.piece_color == ChessPieceColor::WHITE_PIECE)
             {
-                DrawTexture(texture, cell.GetCentreX()-(texture.width/2), cell.GetCentreY()- (texture.height/2), WHITE);
+                DrawTexture(white_pawn_texture, cell.GetCentreX()-(white_pawn_texture.width/2), cell.GetCentreY()- (white_pawn_texture.height/2), WHITE);
             }
         DrawText(TextFormat("%c%d", cell.board_square_position_x, cell.board_square_position_y), cell.GetCentreX(), cell.GetCentreY(), 20, GREEN);
             
@@ -188,7 +266,20 @@ int main ()
 
         EndDrawing();
     }
-    UnloadTexture(texture);
+
+    UnloadTexture(white_pawn_texture);
+    UnloadTexture(black_pawn_texture);
+    UnloadTexture(white_rook_texture);
+    UnloadTexture(black_rook_texture);
+    UnloadTexture(white_bishop_texture);
+    UnloadTexture(black_bishop_texture);
+    UnloadTexture(white_king_texture);
+    UnloadTexture(black_king_texture);
+    UnloadTexture(white_queen_texture);
+    UnloadTexture(black_queen_texture);
+    UnloadTexture(white_knight_texture);
+    UnloadTexture(black_knight_texture);
+
     CloseWindow();
     
 }
