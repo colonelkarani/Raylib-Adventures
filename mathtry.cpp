@@ -8,6 +8,7 @@
 #define WINDOW_HEIGHT 1000
 #define WINDOW_WIDTH 1000
 
+using namespace std;
 
 class Bullet
 {
@@ -15,10 +16,7 @@ class Bullet
         Vector2 Position;
         int size = 4;
         Color color;
-        Bullet(Vector2 position, int size, Color color):Position(position), size(size), color(color)
-        {
-
-        }
+        Bullet(Vector2 position, int size, Color color):Position(position), size(size), color(color){}
 };
 
 class Circle
@@ -77,11 +75,23 @@ Vector2 operator/(Vector2 startingOperator, int denominator)
 return(Vector2){startingOperator.x/denominator, startingOperator.y/denominator};
 }
 
+void Shoot(vector<Bullet> bullet_container)
+{
+if()
+{
+
+}
+}
+
 
 int main ()
 {
+
     InitWindow(WINDOW_WIDTH,WINDOW_HEIGHT,"Hello");
     SetWindowPosition(0,0);
+
+    vector<Bullet> bullet_container;
+
     Circle circle1({200,200}, 30, YELLOW);
     Circle circle2({400,400}, 20, GetRandomSolidColor());
     Circle circle3({400,700}, 30, GetRandomSolidColor());
