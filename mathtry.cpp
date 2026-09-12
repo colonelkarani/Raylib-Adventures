@@ -10,13 +10,15 @@
 
 using namespace std;
 
-class Bullet
+
+class StorageRect
 {
     public:
-        Vector2 Position;
-        int size = 4;
+        int height;
+        int width;
+        Vector2 position;
         Color color;
-        Bullet(Vector2 position, int size, Color color):Position(position), size(size), color(color){}
+    StorageRect(int height, int width, Vector2 pos, Color col):height(height),width(width), position(pos), color(col){}
 };
 
 class Circle
@@ -25,7 +27,7 @@ class Circle
         Vector2 position;
         int radius;
         Color color;
-        int no_of_bullets;
+        bool is_locked =  false;
         Circle(Vector2 position, int radius ,Color color):position(position), radius(radius), color(color)
         {
 
@@ -75,12 +77,9 @@ Vector2 operator/(Vector2 startingOperator, int denominator)
 return(Vector2){startingOperator.x/denominator, startingOperator.y/denominator};
 }
 
-void Shoot(vector<Bullet> bullet_container)
+void RenderRect (StorageRect rect)
 {
-if()
-{
-
-}
+    DrawRectangle(rect.position.x, rect.position.y, rect.width, rect.height, rect.color);
 }
 
 
@@ -90,11 +89,12 @@ int main ()
     InitWindow(WINDOW_WIDTH,WINDOW_HEIGHT,"Hello");
     SetWindowPosition(0,0);
 
-    vector<Bullet> bullet_container;
 
     Circle circle1({200,200}, 30, YELLOW);
     Circle circle2({400,400}, 20, GetRandomSolidColor());
     Circle circle3({400,700}, 30, GetRandomSolidColor());
+
+    StorageRect rect1(100,100, {300,300}, GREEN);
 
     SetTargetFPS(60);
 
@@ -125,6 +125,9 @@ int main ()
         
         circle3.addvector(CircleThreeToCircleTwo/smoothness_factor);
         }
+
+        RenderRect(rect1);
+
         if (IsKeyDown(KEY_DOWN))
         {
             circle2.addvector({0,50});
