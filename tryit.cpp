@@ -18,13 +18,13 @@ int main ()
 {
     InitWindow(1000,1000,"My fucking circles");
     cout<<"A random number is: "<<GetRandomInt(10,90)<<endl;
-    Circle my_circle({100,100}, 30, YELLOW); 
+    Circle my_circle({100,100}, 300, YELLOW); 
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(GREEN);
-        if (IsMouseButtonPressed(0))
+        if (IsMouseButtonDown(0))
         {
             DrawCircle(my_circle.position.x, my_circle.position.y, my_circle.radius, my_circle.color);
         }
