@@ -54,6 +54,8 @@ static const int ECG_BUF = 700;
 
 static const int TARGET_FPS = 60;
 
+static float gTimeScale = 0.55f;
+
 /* ============================================================================
  *  SECTION 2 -- ENUMERATIONS
  * ==========================================================================*/
@@ -2879,8 +2881,10 @@ static void ResetGame(void)
     WaveBegin(0);
 }
 
-static void UpdateGameplay(float dt)
+static void UpdateGameplay(float rawDt)
 {
+    float dt = rawDt * gTimeScale;
+
     gGameTime += dt;
 
     UpdatePlayer(dt);
@@ -2891,9 +2895,9 @@ static void UpdateGameplay(float dt)
     UpdateFloaters(dt);
     UpdateWaveDirector(dt);
 
-    gShake      = Lerpf(gShake, 0.0f, 5.0f * dt);
-    gFlashRed   = Lerpf(gFlashRed, 0.0f, 4.0f * dt);
-    gFlashWhite = Lerpf(gFlashWhite, 0.0f, 6.0f * dt);
+    gShake      = Lerpf(gShake, 0.0f, 5.0f * rawDt);
+    gFlashRed   = Lerpf(gFlashRed, 0.0f, 4.0f * rawDt);
+    gFlashWhite = Lerpf(gFlashWhite, 0.0f, 6.0f * rawDt);
 
     if (!gPatient.alive) gState = STATE_GAMEOVER;
 }
