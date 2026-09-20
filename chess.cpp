@@ -110,6 +110,7 @@ int main ()
              int square_y_position =starting_position_y +(j*cell_height);
              Color CellColor;
              ChessPieceType piece_type;
+             ChessPieceColor piece_color;
              if ((i+j)%2)
              {
                 CellColor = WHITE;
@@ -121,6 +122,16 @@ int main ()
              if (j==1||j==number_of_squares_in_y-2)
              {
                piece_type= ChessPieceType::PAWN;
+               if (j==1)
+               {
+                piece_color = ChessPieceColor::WHITE_PIECE;
+               }
+               if (j==number_of_squares_in_y-2)
+               {
+                piece_color = ChessPieceColor::BLACK_PIECE;
+               }
+               
+               
              }
             //  else if (i == 0 || i )
             //  {
@@ -165,7 +176,7 @@ int main ()
             }
             int position_y = 8-j;
              
-        ChessSquare square = (ChessSquare){square_y_position, square_x_position, cell_width,position_x,position_y,CellColor, piece_type};
+        ChessSquare square = (ChessSquare){square_y_position, square_x_position, cell_width,position_x,position_y,CellColor, piece_type, piece_color};
              
         squares.push_back(square);
         }
@@ -255,6 +266,10 @@ int main ()
             if (cell.piece_type == ChessPieceType::PAWN&& cell.piece_color == ChessPieceColor::WHITE_PIECE)
             {
                 DrawTexture(white_pawn_texture, cell.GetCentreX()-(white_pawn_texture.width/2), cell.GetCentreY()- (white_pawn_texture.height/2), WHITE);
+            }
+            if (cell.piece_type == ChessPieceType::PAWN&& cell.piece_color == ChessPieceColor::BLACK_PIECE)
+            {
+                DrawTexture(black_pawn_texture, cell.GetCentreX()-(white_pawn_texture.width/2), cell.GetCentreY()- (black_pawn_texture.height/2), WHITE);
             }
         DrawText(TextFormat("%c%d", cell.board_square_position_x, cell.board_square_position_y), cell.GetCentreX(), cell.GetCentreY(), 20, GREEN);
             
