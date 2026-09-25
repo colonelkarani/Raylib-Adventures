@@ -10,7 +10,7 @@ using namespace std;
     // Constant lists for card properties
     const vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
     const vector<string> ranks = {
-        "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"
     };
 
 class Card
@@ -20,10 +20,14 @@ public:
     int height = 150;
     string suit;
     string rank;
+    Texture2D texture;
 
     Card(string suit, string rank):
     suit(suit), rank(rank)
-    {};
+    {
+        string filePath = "cards/" + suit + " " + rank + ".png";
+        texture = LoadTexture(filePath.c_str());
+    };
 
     void RenderCard(Vector2 position)
     {
@@ -66,36 +70,54 @@ int main()
             MainDeck.cards.push_back(card);
         }
     }
+
     MainDeck.shuffle();
+
     vector<Card> playersCards;
+    vector<Card> tableCards;
+
+
+
     for (int i = 0; i < 2; i++)
     {
         playersCards.push_back(MainDeck.dealCard());
     }
-    
-    Card RandomCard = MainDeck.dealCard();
-    Card RandomCard2 = MainDeck.dealCard();
-    
+
+        
 while (!WindowShouldClose())
 {
     BeginDrawing();
 
     ClearBackground(BLUE);
 
+    if (IsMouseButtonPressed(0))
+    {
+        tableCards.push_back(MainDeck.dealCard());
+    }
+    
+
     float position_y = 20;
-    float position_x = 0;
+    float position_x_player = 0;
+    float position_x_table = 0;
+
 
     for (auto &&i : playersCards)
     {
-        i.RenderCard({position_x,position_y});
-        position_x +=i.width;
+        i.RenderCard({position_x_player,position_y});
+        position_x_player +=i.width;
     }
+
+    for (auto &&i : tableCards)
+    {
+        i.RenderCard({position_x_table, 250});
+        position_x_table+=i.width;
+    }
+    
 
     
 
     EndDrawing();
 }
-
 
     CloseWindow();
 return 0;
