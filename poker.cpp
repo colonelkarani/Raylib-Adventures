@@ -16,19 +16,19 @@ using namespace std;
 class Card
 {
 public:
-    int width = 50;
-    int height = 100;
-    Vector2 position;
+    int width = 100;
+    int height = 150;
     string suit;
     string rank;
 
-    Card(Vector2 position, string suit, string rank):
-     position(position), suit(suit), rank(rank)
+    Card(string suit, string rank):
+    suit(suit), rank(rank)
     {};
 
-    void RenderCard()
+    void RenderCard(Vector2 position)
     {
         DrawRectangle(position.x, position.y, width, height, WHITE);
+        DrawRectangleLines(position.x, position.y, width, height, BLACK);
         DrawText(suit.c_str(), position.x, position.y ,20, BLACK);
         DrawText(rank.c_str(), position.x, position.y+20 ,20, BLACK);
     }
@@ -62,18 +62,37 @@ int main()
     // Loop through all 4 suits and 13 ranks
     for (int s = 0; s < 4; ++s) {
         for (int r = 0 ; r < 13; ++r) {
-            Card card({200,200},suits[s], ranks[r]);
+            Card card(suits[s], ranks[r]);
             MainDeck.cards.push_back(card);
         }
     }
     MainDeck.shuffle();
+    vector<Card> playersCards;
+    for (int i = 0; i < 2; i++)
+    {
+        playersCards.push_back(MainDeck.dealCard());
+    }
+    
     Card RandomCard = MainDeck.dealCard();
+    Card RandomCard2 = MainDeck.dealCard();
     
 while (!WindowShouldClose())
 {
     BeginDrawing();
+
     ClearBackground(BLUE);
-    RandomCard.RenderCard();
+
+    float position_y = 20;
+    float position_x = 0;
+
+    for (auto &&i : playersCards)
+    {
+        i.RenderCard({position_x,position_y});
+        position_x +=i.width;
+    }
+
+    
+
     EndDrawing();
 }
 
