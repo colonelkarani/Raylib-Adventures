@@ -7,11 +7,30 @@
 
 using namespace std;
 
-    // Constant lists for card properties
-    const vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
-    const vector<string> ranks = {
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"
-    };
+template <typename T>
+int find_vector_index(const std::vector<T>& vec, const T& value) {
+    // 1. Search for the value
+    auto it = std::find(vec.begin(), vec.end(), value);
+    
+    // 2. Return the index if found, or -1 if not found
+    if (it != vec.end()) {
+        return std::distance(vec.begin(), it);
+    }
+    
+    return -1; // Standard way to indicate "not found"
+}
+// Card properties
+const vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+const vector<string> ranks = {
+    "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13","1"
+};
+
+typedef enum 
+{
+HIGH_CARD,
+PAIR,
+TWO_PAIRS
+} CardValue;
 
 class Card
 {
@@ -31,10 +50,27 @@ public:
 
     void RenderCard(Vector2 position)
     {
-        DrawRectangle(position.x, position.y, width, height, WHITE);
-        DrawRectangleLines(position.x, position.y, width, height, BLACK);
-        DrawText(suit.c_str(), position.x, position.y ,20, BLACK);
-        DrawText(rank.c_str(), position.x, position.y+20 ,20, BLACK);
+    if (texture.id > 0)
+            {
+                // Calculate scale to fit specified width and height
+                float scaleX = width / texture.width;
+                float scaleY = height / texture.height;
+
+                DrawTextureEx(texture, position, 0.0f, scaleX, WHITE);
+            }
+            else
+            {
+                // Fallback rendering 
+                DrawRectangle(position.x, position.y, width, height, WHITE);
+                DrawRectangleLines(position.x, position.y, width, height, BLACK);
+                DrawText(suit.c_str(), position.x + 5, position.y + 5, 15, BLACK);
+                DrawText(rank.c_str(), position.x + 5, position.y + 25, 15, BLACK);
+            }
+    }
+
+    void Unload()
+    {
+        UnloadTexture(texture);
     }
     
 };
@@ -42,11 +78,13 @@ public:
 struct Deck
 {
     vector<Card> cards;
+
     void shuffle() {
         std::random_device rd;
         std::mt19937 g(rd());
         std::shuffle(cards.begin(), cards.end(), g);
     }
+
     Card dealCard() {
         if (cards.empty()) {
             throw std::out_of_range("No cards left in the deck!");
@@ -56,12 +94,56 @@ struct Deck
         return topCard;
     }
 
+    void UnloadAll()
+    {
+        for (auto& card : cards)
+        {
+            card.Unload();
+        }
+    }
 };
+
+Card FindHighCard(vector<Card> table_cards, vector<Card> player_cards)
+{
+
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+
+    Card high_card = player_table_cards[0];
+
+    for (auto &&card : player_table_cards)
+    {
+       int current_card_index = find_vector_index(ranks, card.rank);
+        int high_card_index = find_vector_index(ranks, high_card.rank);
+
+        if (current_card_index > high_card_index)
+        {
+            high_card = card;
+        }
+    }
+    return high_card;
+
+}
+
+
+void EvaluateCards()
+{
+    
+}
 
 
 int main()
 {
-    InitWindow(500,500,"Jr is cool");
+    InitWindow(800,600,"Poker: Game of life");
     Deck MainDeck;
     // Loop through all 4 suits and 13 ranks
     for (int s = 0; s < 4; ++s) {
@@ -100,6 +182,7 @@ while (!WindowShouldClose())
     float position_x_player = 0;
     float position_x_table = 0;
 
+    
 
     for (auto &&i : playersCards)
     {
@@ -113,11 +196,17 @@ while (!WindowShouldClose())
         position_x_table+=i.width;
     }
     
+    Card high_card = FindHighCard(tableCards, playersCards);
+    high_card.RenderCard({500, 0});
 
     
 
     EndDrawing();
 }
+
+    MainDeck.UnloadAll();
+    for (auto& card : playersCards) card.Unload();
+    for (auto& card : tableCards) card.Unload();
 
     CloseWindow();
 return 0;
