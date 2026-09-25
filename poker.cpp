@@ -4,17 +4,18 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+#include <map>
 
 using namespace std;
 
 template <typename T>
-int find_vector_index(const std::vector<T>& vec, const T& value) {
+int find_vector_index(const vector<T>& vec, const T& value) {
     // 1. Search for the value
-    auto it = std::find(vec.begin(), vec.end(), value);
+    auto it = find(vec.begin(), vec.end(), value);
     
     // 2. Return the index if found, or -1 if not found
     if (it != vec.end()) {
-        return std::distance(vec.begin(), it);
+        return distance(vec.begin(), it);
     }
     
     return -1; // Standard way to indicate "not found"
@@ -24,6 +25,40 @@ const vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
 const vector<string> ranks = {
     "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13","1"
 };
+
+
+void DrawTextureProportional(
+    Texture2D texture,
+    float x, float y,
+    float max_width,
+    float max_height
+)
+{
+    float scale_w = max_width / texture.width;
+    float scale_h = max_height / texture.height;
+
+    float scale = fminf(scale_w, scale_h);
+
+    float new_width  = texture.width * scale;
+    float new_height = texture.height * scale;
+
+    Rectangle source = {
+        0, 0,
+        (float)texture.width,
+        (float)texture.height
+    };
+
+    Rectangle dest = {
+        x, y,
+        new_width,
+        new_height
+    };
+
+    Vector2 origin = { 0, 0 };
+
+    DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+}
+
 
 typedef enum 
 {
@@ -52,11 +87,9 @@ public:
     {
     if (texture.id > 0)
             {
-                // Calculate scale to fit specified width and height
-                float scaleX = width / texture.width;
-                float scaleY = height / texture.height;
 
-                DrawTextureEx(texture, position, 0.0f, scaleX, WHITE);
+                DrawTextureProportional(texture, position.x, position.y, 100,200);
+            
             }
             else
             {
@@ -74,6 +107,15 @@ public:
     }
     
 };
+
+struct Player
+{
+    int money;
+    int hand_strength;
+    vector<Card> cards;
+
+};
+
 
 struct Deck
 {
@@ -131,9 +173,71 @@ Card FindHighCard(vector<Card> table_cards, vector<Card> player_cards)
         }
     }
     return high_card;
-
 }
 
+
+// bool HasPair(vector<Card> table_cards, vector<Card> player_cards)
+// {
+// bool has_pair = false;
+// vector<Card> player_table_cards;
+
+// for (auto &&card : table_cards)
+// {
+//     player_table_cards.push_back(card);
+// }
+// for (auto &&card : player_cards)
+// {
+//     player_table_cards.push_back(card);
+// }
+
+// map<string, int> rank_counts;
+
+// for (auto &&card : player_table_cards)
+// {
+//     rank_counts[c]
+// }
+
+
+
+// return has_pair;
+
+// }
+int pair_count = 0;
+
+int HasPair(vector<Card> table_cards, vector<Card> player_cards) {
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    std::map<std::string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.rank]++;
+    }
+
+
+    for (const auto& pair : rankCounts) {
+        if (pair.second == 2) {
+            pair_count ++;
+
+            return 1; // Found a pair!
+        }
+        if (pair.second == 3) {
+            return 2; // Three of a kind!
+        }
+    }
+
+    return 0; // Checked everything, no pair found
+}
 
 void EvaluateCards()
 {
@@ -198,6 +302,9 @@ while (!WindowShouldClose())
     
     Card high_card = FindHighCard(tableCards, playersCards);
     high_card.RenderCard({500, 0});
+
+    DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), 600,500, 20, BLACK);
+    DrawText(TextFormat("No of Pairs: %d", HasPair(tableCards, playersCards)), 600,530, 20, BLACK);
 
     
 
