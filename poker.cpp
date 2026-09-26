@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <format>
 
 using namespace std;
 
@@ -345,6 +346,26 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Four of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
 }
 
+void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
+{
+    DrawText(name_of_deck.c_str(), position.x, position.y, 20, BLACK);
+    position.y+=25;
+    for (auto &&i : cards)
+    {
+        i.RenderCard({position.x,position.y});
+        position.x +=i.width;
+    } 
+}
+
+void RenderHighCard(string name_of_player, vector<Card> tableCards, vector<Card> playersCards, Vector2 position)
+{
+    string display_text =  format("{}\'s High Card", name_of_player);
+    DrawText(display_text.c_str(),position.x, position.y, 20, BLACK);
+    position.y +=25;
+    Card high_card = FindHighCard(tableCards, playersCards);
+    high_card.RenderCard(position);
+}
+
 int main()
 {
     InitWindow(900,750,"Poker: Game of life");
@@ -388,32 +409,13 @@ while (!WindowShouldClose())
     }
     
 
-    float position_y = 20;
-    float position_x_player = 0;
-    float position_x_table = 0;
-
+RenderCards("Your cards", playersCards, (Vector2){0,0});
+RenderCards("Table", tableCards, (Vector2){0,200});
+RenderCards("Bots Cards", bot1Cards, (Vector2){0,400});
     
 
-    for (auto &&i : playersCards)
-    {
-        i.RenderCard({position_x_player,position_y});
-        position_x_player +=i.width;
-    }   
-    for (auto &&i : bot1Cards)
-    {
-        i.RenderCard({position_x_player,500});
-        position_x_player +=i.width;
-    }
-
-    for (auto &&i : tableCards)
-    {
-        i.RenderCard({position_x_table, 250});
-        position_x_table+=i.width;
-    }
-    
-    Card high_card = FindHighCard(tableCards, playersCards);
-    high_card.RenderCard({500, 0});
-
+    RenderHighCard("Player", tableCards, playersCards, {300,0});
+    RenderHighCard("Bot", tableCards, bot1Cards, {600,0});
 
     RenderPlayerCardStats(tableCards, playersCards, {500,300});
     RenderPlayerCardStats(tableCards, bot1Cards, {500,500});
