@@ -202,7 +202,6 @@ Card FindHighCard(vector<Card> table_cards, vector<Card> player_cards)
 // return has_pair;
 
 // }
-int pair_count = 0;
 
 int HasPair(vector<Card> table_cards, vector<Card> player_cards) {
     vector<Card> player_table_cards;
@@ -227,17 +226,112 @@ int HasPair(vector<Card> table_cards, vector<Card> player_cards) {
 
     for (const auto& pair : rankCounts) {
         if (pair.second == 2) {
-            pair_count ++;
 
             return 1; // Found a pair!
-        }
-        if (pair.second == 3) {
-            return 2; // Three of a kind!
         }
     }
 
     return 0; // Checked everything, no pair found
 }
+
+int HasThreeOfAKind(vector<Card> table_cards, vector<Card> player_cards) {
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    std::map<std::string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.rank]++;
+    }
+
+
+    for (const auto& pair : rankCounts) {
+
+        if (pair.second == 3) {
+            return 1; // Three of a kind!
+        }
+    }
+
+    return 0; // Checked everything, no pair found
+}
+
+int HasFourOfAKind(vector<Card> table_cards, vector<Card> player_cards) {
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    std::map<std::string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.rank]++;
+    }
+
+
+    for (const auto& pair : rankCounts) {
+
+        if (pair.second == 4) {
+            return 1; // Three of a kind!
+        }
+    }
+
+    return 0; // Checked everything, no pair found
+}
+
+int HasTwoPair(vector<Card> table_cards, vector<Card> player_cards) {
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    map<string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.rank]++;
+    }
+
+int no_of_pairs=0;
+    for (const auto& pair : rankCounts) {
+        if (pair.second == 2) {
+
+            no_of_pairs++;
+        }
+
+    }
+if (no_of_pairs == 2)
+{
+    return 1;
+}
+
+    return 0; 
+}
+
 
 void EvaluateCards()
 {
@@ -303,8 +397,10 @@ while (!WindowShouldClose())
     Card high_card = FindHighCard(tableCards, playersCards);
     high_card.RenderCard({500, 0});
 
-    DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), 600,500, 20, BLACK);
-    DrawText(TextFormat("No of Pairs: %d", HasPair(tableCards, playersCards)), 600,530, 20, BLACK);
+    DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), 500,470, 20, BLACK);
+    DrawText(TextFormat("Has Two Pairs: %d", HasTwoPair(tableCards, playersCards)), 500,500, 20, BLACK);
+    DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), 500,530, 20, BLACK);
+    DrawText(TextFormat("Has Four of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), 500,560, 20, BLACK);
 
     
 
