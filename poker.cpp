@@ -335,13 +335,19 @@ if (no_of_pairs == 2)
 
 void EvaluateCards()
 {
-    
 }
 
+void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, Vector2 position)
+{
+    DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), position.x,position.y, 20, BLACK);
+    DrawText(TextFormat("Has Two Pairs: %d", HasTwoPair(tableCards, playersCards)), position.x,position.y+25 ,20, BLACK);
+    DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+50, 20, BLACK);
+    DrawText(TextFormat("Has Four of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
+}
 
 int main()
 {
-    InitWindow(800,600,"Poker: Game of life");
+    InitWindow(900,750,"Poker: Game of life");
     Deck MainDeck;
     // Loop through all 4 suits and 13 ranks
     for (int s = 0; s < 4; ++s) {
@@ -354,6 +360,7 @@ int main()
     MainDeck.shuffle();
 
     vector<Card> playersCards;
+    vector<Card> bot1Cards;
     vector<Card> tableCards;
 
 
@@ -361,6 +368,11 @@ int main()
     for (int i = 0; i < 2; i++)
     {
         playersCards.push_back(MainDeck.dealCard());
+    }
+
+        for (int i = 0; i < 2; i++)
+    {
+        bot1Cards.push_back(MainDeck.dealCard());
     }
 
         
@@ -386,6 +398,11 @@ while (!WindowShouldClose())
     {
         i.RenderCard({position_x_player,position_y});
         position_x_player +=i.width;
+    }   
+    for (auto &&i : bot1Cards)
+    {
+        i.RenderCard({position_x_player,500});
+        position_x_player +=i.width;
     }
 
     for (auto &&i : tableCards)
@@ -397,11 +414,9 @@ while (!WindowShouldClose())
     Card high_card = FindHighCard(tableCards, playersCards);
     high_card.RenderCard({500, 0});
 
-    DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), 500,470, 20, BLACK);
-    DrawText(TextFormat("Has Two Pairs: %d", HasTwoPair(tableCards, playersCards)), 500,500, 20, BLACK);
-    DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), 500,530, 20, BLACK);
-    DrawText(TextFormat("Has Four of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), 500,560, 20, BLACK);
 
+    RenderPlayerCardStats(tableCards, playersCards, {500,300});
+    RenderPlayerCardStats(tableCards, bot1Cards, {500,500});
     
 
     EndDrawing();
