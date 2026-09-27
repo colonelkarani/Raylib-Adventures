@@ -88,9 +88,7 @@ public:
     {
     if (texture.id > 0)
             {
-
-                DrawTextureProportional(texture, position.x, position.y, 100,200);
-            
+                DrawTextureProportional(texture, position.x, position.y, 125,250);
             }
             else
             {
@@ -290,7 +288,7 @@ int HasFourOfAKind(vector<Card> table_cards, vector<Card> player_cards) {
     for (const auto& pair : rankCounts) {
 
         if (pair.second == 4) {
-            return 1; // Three of a kind!
+            return 1; // Four of a kind!
         }
     }
 
@@ -343,7 +341,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Pair: %d", HasPair(tableCards, playersCards)), position.x,position.y, 20, BLACK);
     DrawText(TextFormat("Has Two Pairs: %d", HasTwoPair(tableCards, playersCards)), position.x,position.y+25 ,20, BLACK);
     DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+50, 20, BLACK);
-    DrawText(TextFormat("Has Four of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
+    DrawText(TextFormat("Has Four of a Kind: %d", HasFourOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
@@ -384,8 +382,6 @@ int main()
     vector<Card> bot1Cards;
     vector<Card> tableCards;
 
-
-
     for (int i = 0; i < 2; i++)
     {
         playersCards.push_back(MainDeck.dealCard());
@@ -409,10 +405,9 @@ while (!WindowShouldClose())
     }
     
 
-RenderCards("Your cards", playersCards, (Vector2){0,0});
-RenderCards("Table", tableCards, (Vector2){0,200});
-RenderCards("Bots Cards", bot1Cards, (Vector2){0,400});
-    
+    RenderCards("Your cards", playersCards, (Vector2){0,0});
+    RenderCards("Table", tableCards, (Vector2){0,200});
+    RenderCards("Bots Cards", bot1Cards, (Vector2){0,400});
 
     RenderHighCard("Player", tableCards, playersCards, {300,0});
     RenderHighCard("Bot", tableCards, bot1Cards, {600,0});
@@ -427,6 +422,7 @@ RenderCards("Bots Cards", bot1Cards, (Vector2){0,400});
     MainDeck.UnloadAll();
     for (auto& card : playersCards) card.Unload();
     for (auto& card : tableCards) card.Unload();
+    for (auto& card : bot1Cards) card.Unload();
 
     CloseWindow();
 return 0;
