@@ -374,6 +374,52 @@ if (no_of_pairs >50)
     return 0; 
 }
 
+int HasFlush(vector<Card> table_cards, vector<Card> player_cards)
+{
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    int spades_count=0;
+    int clubs_count=0;
+    int hearts_count=0;
+    int diamonds_count=0;
+
+    for (auto &&card : player_table_cards)
+    {
+        if (card.suit == "Hearts")
+        {
+            hearts_count++;
+        }
+        else if (card.suit == "Diamonds")
+        {
+            diamonds_count++;
+        }
+        else if(card.suit == "Clubs")
+        {
+            clubs_count++;
+        }else
+        {
+            spades_count++;
+        }
+
+   
+    }
+            if (clubs_count==5||diamonds_count==5||spades_count==5||hearts_count==5)
+        {
+            return 1;
+        }else
+        {
+            return 0;
+        }     
+}
 
 void EvaluateCards()
 {
@@ -386,6 +432,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+50, 20, BLACK);
     DrawText(TextFormat("Has Four of a Kind: %d", HasFourOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
     DrawText(TextFormat("Has Full house: %d", HasFullHouse(tableCards, playersCards)), position.x,position.y+100, 20, BLACK);
+    DrawText(TextFormat("Has Flush: %d", HasFlush(tableCards, playersCards)), position.x,position.y+125, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
