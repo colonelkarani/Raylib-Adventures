@@ -112,6 +112,7 @@ struct Player
     int money;
     int hand_strength;
     vector<Card> cards;
+    bool isWinning;
 
 };
 
@@ -331,6 +332,48 @@ if (no_of_pairs == 2)
     return 0; 
 }
 
+int HasFullHouse(vector<Card> table_cards, vector<Card> player_cards) {
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    map<string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.rank]++;
+    }
+
+int no_of_pairs=0;
+    for (const auto& pair : rankCounts) {
+        if (pair.second == 3)
+        {
+            no_of_pairs+=50;
+        }
+        if (pair.second == 2) {
+
+            no_of_pairs++;
+        }
+
+        
+
+    }
+if (no_of_pairs >50)
+{
+    return 1;
+}
+
+    return 0; 
+}
+
 
 void EvaluateCards()
 {
@@ -342,6 +385,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Two Pairs: %d", HasTwoPair(tableCards, playersCards)), position.x,position.y+25 ,20, BLACK);
     DrawText(TextFormat("Has Three of a Kind: %d", HasThreeOfAKind(tableCards, playersCards)), position.x,position.y+50, 20, BLACK);
     DrawText(TextFormat("Has Four of a Kind: %d", HasFourOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
+    DrawText(TextFormat("Has Full house: %d", HasFullHouse(tableCards, playersCards)), position.x,position.y+100, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
