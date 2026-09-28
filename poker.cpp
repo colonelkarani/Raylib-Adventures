@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <set>
 #include <format>
 
 using namespace std;
@@ -196,8 +197,6 @@ Card FindHighCard(vector<Card> table_cards, vector<Card> player_cards)
 // {
 //     rank_counts[c]
 // }
-
-
 
 // return has_pair;
 
@@ -409,20 +408,81 @@ int HasFlush(vector<Card> table_cards, vector<Card> player_cards)
         {
             spades_count++;
         }
-
    
     }
-            if (clubs_count==5||diamonds_count==5||spades_count==5||hearts_count==5)
+        if (clubs_count==5||diamonds_count==5||spades_count==5||hearts_count==5)
         {
             return 1;
-        }else
+        }
+        else
         {
             return 0;
         }     
 }
 
+// Converts card strings ("2" through "13", "1") into numeric values where Ace is 14
+int getCardRank(const std::string& card) {
+    int rank = std::stoi(card);
+    if (rank == 1) return 14; // Treat Ace as high by default
+    return rank;
+}
+
+bool HasStraight(vector<Card> table_cards, vector<Card> player_cards) {
+    // 1. Convert ranks to numbers and insert into a set to sort and remove duplicates
+   
+   vector<string> hand;
+
+
+    for (auto &&card : table_cards)
+    {
+        hand.push_back(card.rank);
+    }
+    for (auto &&card : player_cards)
+    {
+        hand.push_back(card.rank);
+    }
+
+    std::set<int> ranks;
+    for (const auto& card : hand) {
+        ranks.insert(getCardRank(card));
+    }
+
+    // A straight requires at least 5 unique card ranks
+    if (ranks.size() < 5) return false;
+
+    // 2. Check for the special Ace-low "Wheel" straight (A, 2, 3, 4, 5)
+    // In our set, this looks like (2, 3, 4, 5, 14)
+    if (ranks.count(14) && ranks.count(2) && ranks.count(3) && ranks.count(4) && ranks.count(5)) {
+        return true;
+    }
+
+    // 3. Check for any standard 5-card consecutive sequence
+    // Move a window of 5 elements across the sorted set
+    auto it = ranks.begin();
+    auto end_window = std::prev(ranks.end(), 4); // Stop where a 5-card window can still fit
+    
+    for (; it != end_window; ++it) {
+        auto check_it = it;
+        bool is_straight = true;
+        
+        // Check if the next 4 elements increase by exactly 1 each step
+        for (int i = 0; i < 4; ++i) {
+            auto current = check_it;
+            auto next = ++check_it;
+            if (*next != *current + 1) {
+                is_straight = false;
+                break;
+            }
+        }
+        if (is_straight) return true;
+    }
+
+    return false;
+}
+
 void EvaluateCards()
 {
+
 }
 
 void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, Vector2 position)
@@ -433,6 +493,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Four of a Kind: %d", HasFourOfAKind(tableCards, playersCards)), position.x,position.y+75, 20, BLACK);
     DrawText(TextFormat("Has Full house: %d", HasFullHouse(tableCards, playersCards)), position.x,position.y+100, 20, BLACK);
     DrawText(TextFormat("Has Flush: %d", HasFlush(tableCards, playersCards)), position.x,position.y+125, 20, BLACK);
+    DrawText(TextFormat("Has Straight: %d", HasStraight(tableCards, playersCards)), position.x,position.y+150, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
