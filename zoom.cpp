@@ -6,8 +6,8 @@
 #include <shellapi.h>
 
 // Set your target hour and minute (24-hour format)
-const int TARGET_HOUR = 7;   // e.g., 4:00 PM
-const int TARGET_MINUTE = 00; 
+int TARGET_HOUR = 7;   // e.g., 4:00 PM
+int TARGET_MINUTE = 00; 
 
 void openOperaGX(const std::string& url) {
     // Path to the executable (backslashes are escaped as \\)
@@ -17,9 +17,16 @@ void openOperaGX(const std::string& url) {
     ShellExecuteA(NULL, "open", exePath, url.c_str(), NULL, SW_SHOWNORMAL);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     // Clean up the URL format (No extra literal quotes needed for ShellExecute)
     std::string targetUrl ="https://us02web.zoom.us/j/88226457574?pwd=UlsgPtUaVjDLLDFwfXBk6npGctbhTH.1";
+
+    if (sscanf(argv[1], "%d:%d", &TARGET_HOUR, &TARGET_MINUTE) == 2) {
+        std::cout << "Hours: " << TARGET_HOUR << ", Minutes: " << TARGET_MINUTE << "\n";
+    } else {
+        std::cout << "Error: Invalid time format. Use HH:MM\n";
+    }
+
     std::cout << "Target time set to: " 
               << std::setfill('0') << std::setw(2) << TARGET_HOUR << ":" 
               << std::setfill('0') << std::setw(2) << TARGET_MINUTE << "\n";

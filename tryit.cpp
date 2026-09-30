@@ -1,37 +1,31 @@
 #include <iostream>
-#include <vector>
-#include "raylib.h"
-#include "VKUtils.h"
 
 using namespace std;
 
-class Circle
+int AddNumber(int a,  int b)
 {
-public:
-Vector2 position;
-int radius;
-Color color;
-Circle(Vector2 position, int radius, Color color): position(position), radius(radius), color(color){}
-};
+    return a+b;
+}
 
-int main ()
+
+
+
+int main(int argc, char *argv[])
 {
-    InitWindow(1000,1000,"My fucking circles");
-    cout<<"A random number is: "<<GetRandomInt(10,90)<<endl;
-    Circle my_circle({100,100}, 300, YELLOW); 
+    int hours  = 0;
+    int minutes = 0;
 
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-        ClearBackground(GREEN);
-        if (IsMouseButtonDown(0))
-        {
-            DrawCircle(my_circle.position.x, my_circle.position.y, my_circle.radius, my_circle.color);
-        }
-        
-        DrawText("Must code today", 0,0,20,BLACK);
-        EndDrawing();
+    if (sscanf(argv[1], "%d:%d", &hours, &minutes) == 2) {
+        std::cout << "Hours: " << hours << ", Minutes: " << minutes << "\n";
+    } else {
+        std::cout << "Error: Invalid time format. Use HH:MM\n";
     }
-    CloseWindow();
+
+    // if (argv[2])
+    // {
+    //     int result  = AddNumber(stoi(argv[1]), stoi(argv[2]));
+    //     cout<<result<<endl;
+    // }
+    
     return 0;
 }

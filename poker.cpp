@@ -493,6 +493,60 @@ else
 
 }
 
+int HasHighestFlush(vector<Card> table_cards, vector<Card> player_cards)
+{
+    vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+}
+
+
+int HasRoyalFlush(vector<Card> table_cards, vector<Card> player_cards)
+{
+        vector<Card> player_table_cards;
+
+    for (auto &&card : table_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+    for (auto &&card : player_cards)
+    {
+        player_table_cards.push_back(card);
+    }
+
+    // A map tracking: "Rank Name" -> How many times it appears
+    map<string, int> rankCounts;
+
+    // 1. Loop through the hand and count the frequencies of each rank
+    for (const auto& card : player_table_cards) {
+        rankCounts[card.suit]++;
+    }
+
+    int no_of_pairs=0;
+    for (const auto& pair : rankCounts) {
+        if (pair.second == 5) {
+            no_of_pairs++;
+        }
+    }
+if (no_of_pairs ==1 && HasFlush(table_cards, player_cards) )
+{
+    return 1;
+}else
+{
+    return 0;
+}
+
+
+
+}
+
 void EvaluateCards()
 {
 
@@ -508,6 +562,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Flush: %d", HasFlush(tableCards, playersCards)), position.x,position.y+125, 20, BLACK);
     DrawText(TextFormat("Has Straight: %d", HasStraight(tableCards, playersCards)), position.x,position.y+150, 20, BLACK);
     DrawText(TextFormat("Has Straight Flush: %d", HasStraightFlush(tableCards, playersCards)), position.x,position.y+175, 20, BLACK);
+    DrawText(TextFormat("Has Royal Flush: %d", HasRoyalFlush(tableCards, playersCards)), position.x,position.y+200, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
