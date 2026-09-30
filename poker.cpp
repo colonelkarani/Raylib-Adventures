@@ -480,6 +480,19 @@ bool HasStraight(vector<Card> table_cards, vector<Card> player_cards) {
     return false;
 }
 
+int HasStraightFlush(vector<Card> table_cards, vector<Card> player_cards)
+{
+if (HasStraight(table_cards, player_cards)&&HasFlush(table_cards, player_cards))
+{
+    return 1;
+}
+else
+{
+    return 0;
+}
+
+}
+
 void EvaluateCards()
 {
 
@@ -494,6 +507,7 @@ void RenderPlayerCardStats(vector<Card> tableCards, vector<Card> playersCards, V
     DrawText(TextFormat("Has Full house: %d", HasFullHouse(tableCards, playersCards)), position.x,position.y+100, 20, BLACK);
     DrawText(TextFormat("Has Flush: %d", HasFlush(tableCards, playersCards)), position.x,position.y+125, 20, BLACK);
     DrawText(TextFormat("Has Straight: %d", HasStraight(tableCards, playersCards)), position.x,position.y+150, 20, BLACK);
+    DrawText(TextFormat("Has Straight Flush: %d", HasStraightFlush(tableCards, playersCards)), position.x,position.y+175, 20, BLACK);
 }
 
 void RenderCards(string name_of_deck, vector<Card> cards,Vector2 position)
@@ -564,8 +578,8 @@ while (!WindowShouldClose())
     RenderHighCard("Player", tableCards, playersCards, {300,0});
     RenderHighCard("Bot", tableCards, bot1Cards, {600,0});
 
-    RenderPlayerCardStats(tableCards, playersCards, {500,300});
-    RenderPlayerCardStats(tableCards, bot1Cards, {500,500});
+    RenderPlayerCardStats(tableCards, playersCards, {550,250});
+    RenderPlayerCardStats(tableCards, bot1Cards, {550,500});
     
 
     EndDrawing();
