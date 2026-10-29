@@ -26,12 +26,20 @@ class Square
     Rectangle GetRecFromSquare ()
     {
         return {position.x, position.y, width, width};
+    }
+    Vector2 GetBoxCentre()
+    {
+        return (Vector2){position.x+width/2, position.y+width/2};
     }   
 };
 
 typedef enum 
 {
-
+GAME_ON,
+PAUSED,
+GAME_OVER,
+GAME_WON,
+MAIN_MENU
 } GameState;
 
 
@@ -156,12 +164,13 @@ void DetectPlayerEnemyCollision(Square &square, vector<Square> &enemy_squares)
     }
 }
 
-void DetectPlayerHealthCollision(Square &square, vector<Square> &enemy_squares)
+void DetectPlayerHealthCollision(Square &square, vector<Square> &enemy_squares, GameState &current_state)
 {
     for (auto i = enemy_squares.begin(); i != enemy_squares.end();)
     {
         if(CheckCollisionRecs(square.GetRecFromSquare(), i->GetRecFromSquare()))
         {
+            current_state = GameState::GAME_OVER;
             score-=1;
             i = enemy_squares.erase(i);
         }
@@ -184,7 +193,86 @@ void PlayerSprint()
     } 
 }
 
-void Update(Square &square, vector<Square> &enemy_squares, vector<Square> &health_squares, float&enemy_timer, float &health_timer)
+void ShootLineLeft(Square &square)
+{
+    if (IsKeyDown(KEY_A))
+    {   
+    DrawLine(square.GetBoxCentre().x, square.GetBoxCentre().y, square.GetBoxCentre().x-200, square.GetBoxCentre().y, ORANGE);
+}
+}
+
+void UpdateGameState(GameState &state, vector<Square> &enemy_squares, vector<Square> &health_squares, float &game_timer)
+{
+ game_timer+=GetFrameTime();   
+if (game_timer>=30)
+{
+    enemy_squares.clear();
+    health_squares.clear();
+    round = 1;
+
+    state = GameState::GAME_OVER;  
+}
+
+
+if (score>=10)
+{
+    enemy_squares.clear();
+    health_squares.clear();
+    round = 1;
+
+    state = GameState::GAME_WON;
+}
+}
+
+void RenderWinText()
+{
+    DrawText("YOU WON", 250,250, 70, PURPLE);
+}
+
+void RenderLoseText()
+{
+    DrawText("YOU LOSE", 250,250, 70, RED);
+}
+
+bool IsMousePressedInRec(Rectangle rec)
+{
+    Vector2 mouse_position = GetMousePosition();
+
+    if (IsMouseButtonPressed(0)&&CheckCollisionPointRec(mouse_position, rec))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }        
+}
+
+void Restart(GameState &current_state)
+{
+    Rectangle rect = {0,0,50,50};
+    DrawRectangleRec(rect, YELLOW);
+    if (IsMousePressedInRec(rect))
+    {
+        score = 0;
+        current_state = GameState::GAME_ON;
+    }
+    
+}
+
+void ChangeState(GameState &state, GameState state_to)
+{
+    state = state_to;
+}
+
+void RenderTimer(float timer)
+{
+DrawText(TextFormat("Time Left: %d", 30-int(timer)), 0, 50,30, BLUE);
+}
+
+
+
+void UpdateGamePlay(GameState &state, Square &square, vector<Square> &enemy_squares, vector<Square> &health_squares, float&enemy_timer, float &health_timer, float &game_timer)
 {
 
     RenderSquare(square);
@@ -198,27 +286,61 @@ void Update(Square &square, vector<Square> &enemy_squares, vector<Square> &healt
     UpdateHealthSquarePosition(health_squares);
     UpdateEnemySpeed(10);
     DetectPlayerEnemyCollision(square, enemy_squares);
-    DetectPlayerHealthCollision(square, health_squares);
+    DetectPlayerHealthCollision(square, health_squares, state);
     PlayerSprint();
+    UpdateGameState(state , enemy_squares, health_squares, game_timer);
+    ShootLineLeft(square);
+    RenderTimer(game_timer);
+}
+
+
+
+void UpdateWinMenu(GameState &current_state)
+{
+    RenderWinText();
+    Restart(current_state);
+}
+
+void UpdateLoseMenu(GameState &current_state)
+{
+    RenderLoseText();
+    Restart(current_state);
 }
 
 int main()
 {
-    InitWindow(window_height, window_width, "Back to writing code");
+    InitWindow(window_height, window_width, "FUCK");
     Square MySquare({500,500}, 50, BLUE);
     MySquare.position = {500,500};
     MySquare.width = 50;
     vector<Square> enemySquares;
     vector<Square> healthSquares;
+    GameState current_gamestate = GameState::GAME_ON;
 
     static float enemy_timer = 0.0f;
     static float health_timer = 0.0f;
+    static float game_timer = 0.0f;
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        Update(MySquare, enemySquares, healthSquares, enemy_timer, health_timer);
+        switch (current_gamestate)
+        {
+        case GameState::GAME_ON:
+        UpdateGamePlay(current_gamestate, MySquare, enemySquares, healthSquares, enemy_timer, health_timer, game_timer);
+            break;
+        case GameState::GAME_WON:
+        UpdateWinMenu(current_gamestate);
+        break;
+        case GameState::GAME_OVER:
+        UpdateLoseMenu(current_gamestate);
+        break;
+        
+        default:
+            break;
+        }
+
         EndDrawing();
     }
     CloseWindow();
