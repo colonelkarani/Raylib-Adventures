@@ -181,17 +181,7 @@ void DetectPlayerHealthCollision(Square &square, vector<Square> &enemy_squares, 
     }
 }
 
-void PlayerSprint()
-{
-    if (IsKeyDown(KEY_LEFT_SHIFT))
-    {
-        movement_velocity = 500;
-    }
-    else
-    {
-       movement_velocity = 200;
-    } 
-}
+
 
 void ShootLineLeft(Square &square)
 {
